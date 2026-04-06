@@ -1,0 +1,18 @@
+stages:
+  - build
+
+variables:
+  IMAGE_NAME: "myusername/myapp"
+
+build_docker_image:
+  stage: build
+  image: docker:24.0.2  # use Docker-in-Docker image
+  services:
+    - docker:24-dind
+  script:
+    # Log in to Docker registry using CI/CD variables
+    - echo "$CI_REGISTRY_PASSWORD" | docker login -u "$CI_REGISTRY_USER" --password-stdin $CI_REGISTRY
+    # Build the Docker image
+    - docker build -t $IMAGE_NAME:latest .
+    # Optionally push image to registry
+    # - docker push $IMAGE_NAME:latest
